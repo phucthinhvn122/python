@@ -11,9 +11,7 @@ GLOBAL_HEADERS = {
     "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7",
     "Content-Type": "application/json",
 }
-
-TOKEN_FILE = "token.txt"
-
+TOKEN_FILE = os.path.join(os.environ.get("TEMP", "/tmp"), "token.txt")
 def load_token():
     if os.path.exists(TOKEN_FILE):
         with open(TOKEN_FILE, "r", encoding="utf-8") as f:
