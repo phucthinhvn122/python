@@ -10,7 +10,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus | Advanced Tool</title>
+    <title>DevThinh | Advanced Tool</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -506,7 +506,7 @@ HTML_TEMPLATE = """
         <!-- LEFT SIDEBAR -->
         <div class="glass-panel nav-wrapper">
             <div>
-                <div class="brand"><i class="fa-brands fa-discord"></i> Nexus</div>
+                <div class="brand"><i class="fa-brands fa-discord"></i> DevThinh</div>
                 <div class="brand-subtitle">Advanced Control Hub</div>
             </div>
 
@@ -527,7 +527,7 @@ HTML_TEMPLATE = """
 
             <div
                 style="margin-top: auto; padding-top: 20px; font-size: 0.75rem; color: var(--text-muted); text-align: center;">
-                Secure Local Tunnel � v2026.01
+                Secure Local Tunnel • v2026.01
             </div>
         </div>
 
@@ -582,7 +582,7 @@ HTML_TEMPLATE = """
                                         <span class="input-group-text"
                                             style="background:var(--bg-glass-input); border:1px solid var(--border-glass); border-right:none; color:var(--text-muted);"><i
                                                 class="fa-solid fa-lock"></i></span>
-                                        <input type="password" class="form-control" id="password" placeholder="��������"
+                                        <input type="password" class="form-control" id="password" placeholder="••••••••"
                                             style="border-left:none;">
                                     </div>
                                 </div>
@@ -1008,3 +1008,4 @@ def api_join():
 # Disable debug mode as it causes issues in serverless environments
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
