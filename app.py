@@ -1,4 +1,9 @@
-TML_TEMPLATE = """
+import requests
+import os
+import time
+from flask import Flask, render_template_string, request, jsonify
+
+HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -522,7 +527,7 @@ TML_TEMPLATE = """
 
             <div
                 style="margin-top: auto; padding-top: 20px; font-size: 0.75rem; color: var(--text-muted); text-align: center;">
-                Secure Local Tunnel • v2026.01
+                Secure Local Tunnel � v2026.01
             </div>
         </div>
 
@@ -577,7 +582,7 @@ TML_TEMPLATE = """
                                         <span class="input-group-text"
                                             style="background:var(--bg-glass-input); border:1px solid var(--border-glass); border-right:none; color:var(--text-muted);"><i
                                                 class="fa-solid fa-lock"></i></span>
-                                        <input type="password" class="form-control" id="password" placeholder="••••••••"
+                                        <input type="password" class="form-control" id="password" placeholder="��������"
                                             style="border-left:none;">
                                     </div>
                                 </div>
@@ -848,3 +853,158 @@ TML_TEMPLATE = """
 
 </html>
 """
+
+app = Flask(__name__)
+
+GLOBAL_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+    "Content-Type": "application/json"
+}
+
+TOKEN_FILE = "/tmp/token.txt"
+
+def load_saved_token():
+    if os.path.exists(TOKEN_FILE):
+        with open(TOKEN_FILE, "r") as f:
+            return f.read().strip()
+    return None
+
+def capsolver_solve(site_key, site_url, capsolver_key):
+    try:
+        payload = {
+            "clientKey": capsolver_key,
+            "task": {
+                "type": "HCaptchaTaskProxyLess",
+                "websiteURL": site_url,
+                "websiteKey": site_key
+            }
+        }
+        res = requests.post("https://api.capsolver.com/createTask", json=payload)
+        res_data = res.json()
+        if res_data.get("errorId") == 0:
+            task_id = res_data.get("taskId")
+            for _ in range(30):
+                time.sleep(2)
+                check_res = requests.post("https://api.capsolver.com/getTaskResult", json={
+                    "clientKey": capsolver_key,
+                    "taskId": task_id
+                })
+                check_data = check_res.json()
+                if check_data.get("status") == "ready":
+                    return {"success": True, "token": check_data.get("solution", {}).get("gRecaptchaResponse")}
+                elif check_data.get("status") == "failed":
+                    return {"success": False, "message": check_data.get("errorDescription")}
+            return {"success": False, "message": "Captcha solving timed out"}
+        else:
+            return {"success": False, "message": res_data.get("errorDescription", "Unknown error creating task")}
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+@app.route("/")
+def index():
+    return render_template_string(HTML_TEMPLATE)
+
+@app.route("/api/save_token", methods=["POST"])
+def api_save_token():
+    data = request.json
+    token = data.get("token")
+    if token:
+        with open(TOKEN_FILE, "w") as f:
+            f.write(token)
+        return jsonify({"success": True})
+    return jsonify({"success": False, "message": "No token provided."}), 400
+
+@app.route("/api/login_email", methods=["POST"])
+def api_login_email():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+    capsolver_key = data.get("capsolver_key", "").strip()
+    mfa_code = data.get("mfa_code")
+    ticket = data.get("ticket")
+
+    if not email or not password:
+        return jsonify({"success": False, "message": "Missing email or password."}), 400
+
+    payload = {"login": email, "password": password}
+    
+    if mfa_code and ticket:
+        mfa_payload = {"code": mfa_code, "ticket": ticket, "login_source": None, "gift_code_sku_id": None}
+        mfa_url = "https://discord.com/api/v9/auth/mfa/totp"
+        res = requests.post(mfa_url, json=mfa_payload, headers=GLOBAL_HEADERS)
+        if res.status_code == 200:
+            token = res.json().get("token")
+            with open(TOKEN_FILE, "w") as f:
+                f.write(token)
+            return jsonify({"success": True, "token": token})
+        else:
+            return jsonify({"success": False, "message": f"MFA Failed: {res.text}"}), 400
+
+    # Normal login
+    res = requests.post("https://discord.com/api/v9/auth/login", json=payload, headers=GLOBAL_HEADERS)
+    
+    # CapSolver Handle
+    if res.status_code == 400 and "captcha" in res.text.lower():
+        if capsolver_key:
+            captcha_sitekey = res.json().get("captcha_sitekey")
+            if captcha_sitekey:
+                cap_result = capsolver_solve(captcha_sitekey, "https://discord.com/login", capsolver_key)
+                if cap_result["success"]:
+                    payload["captcha_key"] = cap_result["token"]
+                    # Retry
+                    res = requests.post("https://discord.com/api/v9/auth/login", json=payload, headers=GLOBAL_HEADERS)
+                else:
+                    return jsonify({"success": False, "message": "CapSolver Failed: " + cap_result["message"]}), 400
+        else:
+            return jsonify({"success": False, "message": "Captcha required but no CapSolver key provided."}), 400
+
+    data_res = res.json()
+    if "token" in data_res:
+        token = data_res["token"]
+        with open(TOKEN_FILE, "w") as f:
+            f.write(token)
+        return jsonify({"success": True, "token": token})
+    elif "mfa" in res.text.lower() or "ticket" in data_res:
+        return jsonify({"success": False, "require_mfa": True, "ticket": data_res.get("ticket")})
+    else:
+        return jsonify({"success": False, "message": res.text}), 400
+
+@app.route("/api/check", methods=["POST"])
+def api_check():
+    data = request.json or {}
+    token = data.get("token") or load_saved_token()
+    if not token:
+        return jsonify({"success": False, "message": "No token available."}), 400
+    
+    headers = GLOBAL_HEADERS.copy()
+    headers["Authorization"] = token
+    res = requests.get("https://discord.com/api/v9/users/@me", headers=headers)
+    if res.status_code == 200:
+        return jsonify({"success": True, "user": res.json()})
+    else:
+        return jsonify({"success": False, "message": "Invalid or expired token."}), 401
+
+@app.route("/api/join", methods=["POST"])
+def api_join():
+    data = request.json
+    invite = data.get("invite", "").strip()
+    invite_code = invite.split("/")[-1]
+    
+    token = data.get("token") or load_saved_token()
+    if not token:
+        return jsonify({"success": False, "message": "No token available."}), 400
+    
+    headers = GLOBAL_HEADERS.copy()
+    headers["Authorization"] = token
+    
+    res = requests.post(f"https://discord.com/api/v9/invites/{invite_code}", headers=headers, json={})
+    if res.status_code == 200:
+        guild = res.json().get("guild", {})
+        return jsonify({"success": True, "guild_name": guild.get("name", "Unknown Server")})
+    else:
+        return jsonify({"success": False, "message": res.text}), 400
+
+# Required for Vercel
+# Disable debug mode as it causes issues in serverless environments
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
