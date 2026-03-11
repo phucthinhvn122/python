@@ -491,6 +491,109 @@ HTML_TEMPLATE = """
         ::-webkit-scrollbar-thumb:hover {
             background: #5865F2;
         }
+
+        /* Token Vault */
+        .vault-token-box {
+            background: rgba(0,0,0,0.5);
+            border: 1px dashed rgba(0, 255, 194, 0.35);
+            border-radius: 12px;
+            padding: 18px 20px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.82rem;
+            color: var(--accent);
+            word-break: break-all;
+            position: relative;
+            min-height: 60px;
+        }
+
+        .vault-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .btn-copy {
+            background: rgba(0, 255, 194, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(0,255,194,0.3);
+        }
+        .btn-copy:hover { background: rgba(0,255,194,0.22); }
+
+        .btn-danger-sm {
+            background: rgba(220, 53, 69, 0.12);
+            color: #ff6b6b;
+            border: 1px solid rgba(220,53,69,0.3);
+        }
+        .btn-danger-sm:hover { background: rgba(220,53,69,0.22); }
+
+        /* Token Decoder */
+        .decode-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        @media (max-width: 600px) { .decode-grid { grid-template-columns: 1fr; } }
+
+        .decode-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 16px 18px;
+        }
+
+        .decode-card-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .decode-card-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: white;
+            word-break: break-all;
+        }
+
+        .decode-card.accent-card { border-color: rgba(0,255,194,0.25); }
+        .decode-card.accent-card .decode-card-value { color: var(--accent); }
+
+        .avatar-preview {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            box-shadow: var(--glow-primary);
+            object-fit: cover;
+        }
+
+        .nitro-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .nitro-none { background: rgba(255,255,255,0.07); color: var(--text-muted); }
+        .nitro-classic { background: rgba(88,101,242,0.2); color: #a6b2ff; }
+        .nitro-full { background: rgba(235,69,158,0.2); color: #ff79c6; }
     </style>
 </head>
 
@@ -522,6 +625,14 @@ HTML_TEMPLATE = """
                 <button class="nav-link" id="v-join-tab" data-bs-toggle="pill" data-bs-target="#v-join" type="button"
                     role="tab" aria-selected="false">
                     <i class="fa-solid fa-satellite-dish"></i> Target Guilds
+                </button>
+                <button class="nav-link" id="v-vault-tab" data-bs-toggle="pill" data-bs-target="#v-vault" type="button"
+                    role="tab" aria-selected="false">
+                    <i class="fa-solid fa-vault"></i> Token Vault
+                </button>
+                <button class="nav-link" id="v-decode-tab" data-bs-toggle="pill" data-bs-target="#v-decode" type="button"
+                    role="tab" aria-selected="false">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> Token Decoder
                 </button>
             </div>
 
@@ -676,6 +787,128 @@ HTML_TEMPLATE = """
                     <button class="btn btn-primary btn-modern" id="btnJoinServer" onclick="joinDiscordServer()">
                         <i class="fa-solid fa-bolt"></i> Execute Injection
                     </button>
+                </div>
+
+                <!-- TOKEN VAULT TAB -->
+                <div class="tab-pane fade" id="v-vault" role="tabpanel" tabindex="0">
+                    <h2 class="pane-title"><i class="fa-solid fa-vault text-primary"></i> Token Vault</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Manage your locally
+                        stored session token. Token is saved server-side in an encrypted temp file.</p>
+
+                    <label class="form-label">Stored Token</label>
+                    <div class="vault-token-box" id="vaultTokenDisplay">
+                        <span style="color: var(--text-muted); font-style: italic;">Loading vault...</span>
+                    </div>
+
+                    <div class="vault-actions">
+                        <button class="btn-small btn-copy" onclick="copyVaultToken()">
+                            <i class="fa-solid fa-copy"></i> Copy Token
+                        </button>
+                        <button class="btn-small" onclick="toggleMask()"
+                            style="background:rgba(255,255,255,0.05);color:var(--text-muted);border:1px solid var(--border-glass);">
+                            <i class="fa-solid fa-eye" id="maskIcon"></i> Toggle Mask
+                        </button>
+                        <button class="btn-small btn-danger-sm" onclick="deleteVaultToken()">
+                            <i class="fa-solid fa-trash"></i> Delete Token
+                        </button>
+                    </div>
+
+                    <div id="vaultAlert" class="alert-custom mt-4"></div>
+                </div>
+
+                <!-- TOKEN DECODER TAB -->
+                <div class="tab-pane fade" id="v-decode" role="tabpanel" tabindex="0">
+                    <h2 class="pane-title"><i class="fa-solid fa-magnifying-glass-chart text-primary"></i> Token Decoder</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Extract embedded
+                        information from a Discord token without calling the API, or fetch the full profile.</p>
+
+                    <div class="mb-3">
+                        <label class="form-label">Token to Decode (Leave blank to use saved token)</label>
+                        <input type="text" class="form-control" id="decodeToken"
+                            placeholder="Paste token or leave blank...">
+                    </div>
+
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-primary btn-modern" id="btnDecode" onclick="decodeToken()" style="flex:1;">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Decode Locally
+                        </button>
+                        <button class="btn btn-accent btn-modern" id="btnDecodeAPI" onclick="decodeTokenAPI()" style="flex:1;">
+                            <i class="fa-solid fa-cloud-arrow-down"></i> Fetch Full Profile
+                        </button>
+                    </div>
+
+                    <div id="decodeResult" style="display:none; margin-top:20px;">
+                        <!-- Local decode section -->
+                        <div id="localDecodeSection">
+                            <div style="font-size:0.75rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;">
+                                <i class="fa-solid fa-microchip"></i> Embedded Data (No API)
+                            </div>
+                            <div class="decode-grid">
+                                <div class="decode-card accent-card">
+                                    <div class="decode-card-title">User ID</div>
+                                    <div class="decode-card-value" id="dUserId">—</div>
+                                </div>
+                                <div class="decode-card">
+                                    <div class="decode-card-title">Token Created At</div>
+                                    <div class="decode-card-value" id="dCreatedAt">—</div>
+                                </div>
+                                <div class="decode-card">
+                                    <div class="decode-card-title">Account Created At</div>
+                                    <div class="decode-card-value" id="dAccountAge">—</div>
+                                </div>
+                                <div class="decode-card accent-card">
+                                    <div class="decode-card-title">HMAC Signature</div>
+                                    <div class="decode-card-value" id="dHmac" style="font-size:0.75rem;">—</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Full API profile section -->
+                        <div id="apiDecodeSection" style="display:none; margin-top:24px;">
+                            <div style="font-size:0.75rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;">
+                                <i class="fa-solid fa-cloud"></i> Discord API Profile
+                            </div>
+                            <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px;">
+                                <img id="dAvatar" src="" class="avatar-preview" style="display:none;" alt="Avatar">
+                                <div>
+                                    <div style="font-size:1.2rem; font-weight:700; color:white;" id="dUsername">—</div>
+                                    <div style="font-size:0.85rem; color:var(--text-muted);" id="dDiscriminator"></div>
+                                </div>
+                            </div>
+                            <div class="decode-grid">
+                                <div class="decode-card">
+                                    <div class="decode-card-title">Email</div>
+                                    <div class="decode-card-value" id="dEmail">—</div>
+                                </div>
+                                <div class="decode-card">
+                                    <div class="decode-card-title">Phone</div>
+                                    <div class="decode-card-value" id="dPhone">—</div>
+                                </div>
+                                <div class="decode-card">
+                                    <div class="decode-card-title">Locale</div>
+                                    <div class="decode-card-value" id="dLocale">—</div>
+                                </div>
+                                <div class="decode-card">
+                                    <div class="decode-card-title">MFA Enabled</div>
+                                    <div class="decode-card-value" id="dMfa">—</div>
+                                </div>
+                                <div class="decode-card">
+                                    <div class="decode-card-title">Verified Email</div>
+                                    <div class="decode-card-value" id="dVerified">—</div>
+                                </div>
+                                <div class="decode-card">
+                                    <div class="decode-card-title">Account Flags</div>
+                                    <div class="decode-card-value" id="dFlags">—</div>
+                                </div>
+                                <div class="decode-card" style="grid-column: span 2;">
+                                    <div class="decode-card-title">Nitro Type</div>
+                                    <div class="decode-card-value" id="dNitro">—</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="decodeAlert" class="alert-custom mt-4"></div>
                 </div>
 
             </div>
@@ -847,6 +1080,230 @@ HTML_TEMPLATE = """
                 resetBtn("btnJoinServer", "Execute Injection", "fa-solid fa-bolt");
             }
         }
+
+        // =====================================================
+        // MODULE: TOKEN VAULT
+        // =====================================================
+        let _vaultToken = null;
+        let _vaultMasked = true;
+
+        function showVaultAlert(msg, type) {
+            const el = document.getElementById('vaultAlert');
+            el.style.display = 'block';
+            el.className = `alert-custom alert-${type} mt-4`;
+            el.innerHTML = msg;
+        }
+
+        function renderVaultDisplay() {
+            const box = document.getElementById('vaultTokenDisplay');
+            if (!_vaultToken) {
+                box.innerHTML = '<span style="color:var(--text-muted); font-style:italic;">No token stored in vault.</span>';
+                return;
+            }
+            if (_vaultMasked) {
+                const parts = _vaultToken.split('.');
+                const masked = parts.map((p, i) => i === 0 ? p : '●'.repeat(Math.min(p.length, 12))).join('.');
+                box.innerHTML = `<span style="color:var(--accent);">${masked}</span> <span style="color:var(--text-muted); font-size:0.75rem; margin-left:8px;">(masked)</span>`;
+            } else {
+                box.innerHTML = `<span style="color:var(--accent);">${_vaultToken}</span>`;
+            }
+        }
+
+        async function loadVault() {
+            try {
+                const res = await axios.get('/api/get_token');
+                _vaultToken = res.data.token || null;
+                renderVaultDisplay();
+            } catch {
+                document.getElementById('vaultTokenDisplay').innerHTML =
+                    '<span style="color:#ff6b6b;">Failed to load vault.</span>';
+            }
+        }
+
+        function toggleMask() {
+            _vaultMasked = !_vaultMasked;
+            const icon = document.getElementById('maskIcon');
+            icon.className = _vaultMasked ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+            renderVaultDisplay();
+        }
+
+        async function copyVaultToken() {
+            if (!_vaultToken) return showVaultAlert('No token to copy.', 'danger');
+            await navigator.clipboard.writeText(_vaultToken);
+            showVaultAlert('<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Token copied to clipboard!', 'success');
+        }
+
+        async function deleteVaultToken() {
+            if (!_vaultToken) return showVaultAlert('Vault is already empty.', 'warning');
+            if (!confirm('Are you sure you want to delete the saved token?')) return;
+            try {
+                const res = await axios.delete('/api/delete_token');
+                if (res.data.success) {
+                    _vaultToken = null;
+                    renderVaultDisplay();
+                    showVaultAlert('<i class="fa-solid fa-trash" style="margin-right:6px;"></i> Token deleted from vault.', 'success');
+                }
+            } catch (e) {
+                showVaultAlert('Delete failed: ' + (e.response?.data?.message || e.message), 'danger');
+            }
+        }
+
+        // Load vault when that tab is shown
+        document.getElementById('v-vault-tab').addEventListener('shown.bs.tab', loadVault);
+
+        // =====================================================
+        // MODULE: TOKEN DECODER
+        // =====================================================
+        const DISCORD_EPOCH = 1420070400000n;
+
+        function showDecodeAlert(msg, type) {
+            const el = document.getElementById('decodeAlert');
+            el.style.display = 'block';
+            el.className = `alert-custom alert-${type} mt-4`;
+            el.innerHTML = msg;
+        }
+        function hideDecodeAlert() { document.getElementById('decodeAlert').style.display = 'none'; }
+
+        function base64UrlDecode(str) {
+            str = str.replace(/-/g, '+').replace(/_/g, '/');
+            while (str.length % 4) str += '=';
+            return atob(str);
+        }
+
+        function decodeLocalToken(tokenStr) {
+            const parts = tokenStr.split('.');
+            if (parts.length !== 3) return null;
+
+            // Part 1: base64 encoded user ID
+            let userId;
+            try {
+                userId = atob(parts[0]);
+            } catch { userId = base64UrlDecode(parts[0]); }
+
+            // Part 2: base64 encoded timestamp (seconds since epoch)
+            let tokenTs = null;
+            try {
+                const raw = base64UrlDecode(parts[1]);
+                // If the decoded string is a number string
+                const asInt = parseInt(raw, 10);
+                if (!isNaN(asInt)) {
+                    tokenTs = new Date(asInt * 1000);
+                } else {
+                    // Try reading as 4-byte big-endian int
+                    const bytes = Array.from(raw).map(c => c.charCodeAt(0));
+                    if (bytes.length >= 4) {
+                        const val = (bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
+                        tokenTs = new Date(val * 1000);
+                    }
+                }
+            } catch {}
+
+            // Account creation from User ID (Discord Snowflake)
+            let accountCreated = null;
+            try {
+                const snowflake = BigInt(userId.trim());
+                const tsBig = (snowflake >> 22n) + DISCORD_EPOCH;
+                accountCreated = new Date(Number(tsBig));
+            } catch {}
+
+            return {
+                userId: userId.trim(),
+                hmac: parts[2],
+                tokenCreated: tokenTs ? tokenTs.toUTCString() : 'Unable to decode',
+                accountCreated: accountCreated ? accountCreated.toUTCString() : 'Unable to decode'
+            };
+        }
+
+        async function getTokenForDecode() {
+            let t = document.getElementById('decodeToken').value.trim();
+            if (!t) {
+                const res = await axios.get('/api/get_token');
+                t = res.data.token;
+            }
+            return t;
+        }
+
+        async function decodeToken() {
+            hideDecodeAlert();
+            let tokenStr;
+            try { tokenStr = await getTokenForDecode(); } catch { return showDecodeAlert('Could not retrieve token.', 'danger'); }
+            if (!tokenStr) return showDecodeAlert('No token provided or stored.', 'danger');
+
+            const info = decodeLocalToken(tokenStr);
+            if (!info) return showDecodeAlert('Invalid token format. Must be 3-part dot-separated.', 'danger');
+
+            document.getElementById('dUserId').innerText = info.userId;
+            document.getElementById('dCreatedAt').innerText = info.tokenCreated;
+            document.getElementById('dAccountAge').innerText = info.accountCreated;
+            document.getElementById('dHmac').innerText = info.hmac;
+
+            document.getElementById('apiDecodeSection').style.display = 'none';
+            document.getElementById('decodeResult').style.display = 'block';
+            showDecodeAlert('<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Token decoded locally — no API call made.', 'success');
+        }
+
+        const NITRO_MAP = { 0: 'None', 1: 'Nitro Classic', 2: 'Nitro Full', 3: 'Nitro Basic' };
+
+        async function decodeTokenAPI() {
+            hideDecodeAlert();
+            let tokenStr;
+            try { tokenStr = await getTokenForDecode(); } catch { return showDecodeAlert('Could not retrieve token.', 'danger'); }
+            if (!tokenStr) return showDecodeAlert('No token provided or stored.', 'danger');
+
+            loadBtn('btnDecodeAPI', 'Fetching Profile...');
+
+            try {
+                const res = await axios.post('/api/decode', { token: tokenStr });
+                if (!res.data.success) {
+                    showDecodeAlert('API Error: ' + res.data.message, 'danger');
+                    return;
+                }
+
+                const u = res.data.user;
+                const local = decodeLocalToken(tokenStr);
+
+                // Local section
+                if (local) {
+                    document.getElementById('dUserId').innerText = local.userId;
+                    document.getElementById('dCreatedAt').innerText = local.tokenCreated;
+                    document.getElementById('dAccountAge').innerText = local.accountCreated;
+                    document.getElementById('dHmac').innerText = local.hmac;
+                }
+
+                // API profile section
+                document.getElementById('dUsername').innerText = u.global_name || u.username || '—';
+                document.getElementById('dDiscriminator').innerText =
+                    u.discriminator && u.discriminator !== '0' ? `#${u.discriminator}` : `@${u.username}`;
+                document.getElementById('dEmail').innerText = u.email || 'Not available';
+                document.getElementById('dPhone').innerText = u.phone || 'None';
+                document.getElementById('dLocale').innerText = u.locale || '—';
+                document.getElementById('dMfa').innerText = u.mfa_enabled ? '✅ Enabled' : '❌ Disabled';
+                document.getElementById('dVerified').innerText = u.verified ? '✅ Verified' : '❌ Not Verified';
+                document.getElementById('dFlags').innerText = u.public_flags !== undefined ? `${u.public_flags}` : '—';
+
+                const nitroLabel = NITRO_MAP[u.premium_type || 0] || 'Unknown';
+                const nClass = u.premium_type === 2 ? 'nitro-full' : u.premium_type === 1 ? 'nitro-classic' : 'nitro-none';
+                document.getElementById('dNitro').innerHTML = `<span class="nitro-badge ${nClass}">${nitroLabel}</span>`;
+
+                // Avatar
+                const avatarEl = document.getElementById('dAvatar');
+                if (u.avatar) {
+                    avatarEl.src = `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.webp?size=128`;
+                    avatarEl.style.display = 'block';
+                } else {
+                    avatarEl.style.display = 'none';
+                }
+
+                document.getElementById('apiDecodeSection').style.display = 'block';
+                document.getElementById('decodeResult').style.display = 'block';
+                showDecodeAlert('<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Full profile extracted successfully.', 'success');
+
+            } catch (e) {
+                showDecodeAlert('Request failed: ' + (e.response?.data?.message || e.message), 'danger');
+            } finally {
+                resetBtn('btnDecodeAPI', 'Fetch Full Profile', 'fa-solid fa-cloud-arrow-down');
+            }
+        }
     </script>
 
 </body>
@@ -913,6 +1370,33 @@ def api_save_token():
             f.write(token)
         return jsonify({"success": True})
     return jsonify({"success": False, "message": "No token provided."}), 400
+
+@app.route("/api/get_token", methods=["GET"])
+def api_get_token():
+    token = load_saved_token()
+    if token:
+        return jsonify({"success": True, "token": token})
+    return jsonify({"success": False, "token": None, "message": "No token stored."})
+
+@app.route("/api/delete_token", methods=["DELETE"])
+def api_delete_token():
+    if os.path.exists(TOKEN_FILE):
+        os.remove(TOKEN_FILE)
+        return jsonify({"success": True})
+    return jsonify({"success": False, "message": "No token file found."}), 404
+
+@app.route("/api/decode", methods=["POST"])
+def api_decode():
+    data = request.json or {}
+    token = data.get("token") or load_saved_token()
+    if not token:
+        return jsonify({"success": False, "message": "No token provided or stored."}), 400
+    headers = GLOBAL_HEADERS.copy()
+    headers["Authorization"] = token
+    res = requests.get("https://discord.com/api/v9/users/@me", headers=headers)
+    if res.status_code == 200:
+        return jsonify({"success": True, "user": res.json()})
+    return jsonify({"success": False, "message": f"Token invalid or expired. ({res.status_code})"}), 401
 
 @app.route("/api/login_email", methods=["POST"])
 def api_login_email():
