@@ -10,7 +10,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevThinh | Advanced Tool</title>
+    <title>DevThinh | Công Cụ Nâng Cao</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -594,6 +594,71 @@ HTML_TEMPLATE = """
         .nitro-none { background: rgba(255,255,255,0.07); color: var(--text-muted); }
         .nitro-classic { background: rgba(88,101,242,0.2); color: #a6b2ff; }
         .nitro-full { background: rgba(235,69,158,0.2); color: #ff79c6; }
+
+        /* ── Telegram Hub ── */
+        :root { --tg: #229ED9; --tg-hover: #1a8bbf; --glow-tg: 0 0 20px rgba(34,158,217,0.35); }
+
+        .tg-sub-nav {
+            background: var(--bg-glass-input);
+            border-radius: 12px;
+            padding: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 22px;
+        }
+        .tg-sub-nav .nav-link {
+            flex: 1;
+            text-align: center;
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            white-space: nowrap;
+        }
+        .tg-sub-nav .nav-link.active {
+            background: rgba(34,158,217,0.15);
+            color: #55c2f5;
+            border: 1px solid rgba(34,158,217,0.35);
+        }
+
+        .btn-tg {
+            background: var(--tg);
+            color: white;
+            box-shadow: 0 5px 15px rgba(34,158,217,0.3);
+        }
+        .btn-tg:hover {
+            background: var(--tg-hover) !important;
+            transform: translateY(-2px);
+            box-shadow: var(--glow-tg);
+        }
+
+        .tg-info-card {
+            background: linear-gradient(135deg, rgba(34,158,217,0.06), rgba(255,255,255,0.01));
+            border: 1px solid rgba(34,158,217,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+            animation: slideInUp 0.4s;
+        }
+        .tg-info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            gap: 12px;
+        }
+        .tg-info-item:last-child { border-bottom: none; }
+        .tg-info-label { color: var(--text-muted); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.8px; flex-shrink: 0; }
+        .tg-info-value { color: white; font-weight: 600; font-size: 0.92rem; text-align: right; word-break: break-all; }
+        .tg-dot { height:10px; width:10px; background:#229ED9; border-radius:50%; display:inline-block; box-shadow: 0 0 10px #229ED9; margin-right:8px; }
     </style>
 </head>
 
@@ -610,35 +675,39 @@ HTML_TEMPLATE = """
         <div class="glass-panel nav-wrapper">
             <div>
                 <div class="brand"><i class="fa-brands fa-discord"></i> DevThinh</div>
-                <div class="brand-subtitle">Advanced Control Hub</div>
+                <div class="brand-subtitle">Bảng Điều Khiển Nâng Cao</div>
             </div>
 
             <div class="nav flex-column nav-pills-custom" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                 <button class="nav-link active" id="v-login-tab" data-bs-toggle="pill" data-bs-target="#v-login"
                     type="button" role="tab" aria-selected="true">
-                    <i class="fa-solid fa-right-to-bracket"></i> Authentication
+                    <i class="fa-solid fa-right-to-bracket"></i> Đăng Nhập
                 </button>
                 <button class="nav-link" id="v-check-tab" data-bs-toggle="pill" data-bs-target="#v-check" type="button"
                     role="tab" aria-selected="false">
-                    <i class="fa-solid fa-shield-halved"></i> Verify Session
+                    <i class="fa-solid fa-shield-halved"></i> Kiểm Tra Session
                 </button>
                 <button class="nav-link" id="v-join-tab" data-bs-toggle="pill" data-bs-target="#v-join" type="button"
                     role="tab" aria-selected="false">
-                    <i class="fa-solid fa-satellite-dish"></i> Target Guilds
+                    <i class="fa-solid fa-satellite-dish"></i> Vào Server
                 </button>
                 <button class="nav-link" id="v-vault-tab" data-bs-toggle="pill" data-bs-target="#v-vault" type="button"
                     role="tab" aria-selected="false">
-                    <i class="fa-solid fa-vault"></i> Token Vault
+                    <i class="fa-solid fa-vault"></i> Kho Token
                 </button>
                 <button class="nav-link" id="v-decode-tab" data-bs-toggle="pill" data-bs-target="#v-decode" type="button"
                     role="tab" aria-selected="false">
-                    <i class="fa-solid fa-magnifying-glass-chart"></i> Token Decoder
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> Giải Mã Token
+                </button>
+                <button class="nav-link" id="v-tg-tab" data-bs-toggle="pill" data-bs-target="#v-tg" type="button"
+                    role="tab" aria-selected="false" style="margin-top:4px;">
+                    <i class="fa-brands fa-telegram" style="color:#229ED9;"></i> Telegram Hub
                 </button>
             </div>
 
             <div
                 style="margin-top: auto; padding-top: 20px; font-size: 0.75rem; color: var(--text-muted); text-align: center;">
-                Secure Local Tunnel • v2026.01
+                Kết Nối Cục Bộ • v2026.01
             </div>
         </div>
 
@@ -648,16 +717,16 @@ HTML_TEMPLATE = """
 
                 <!-- AUTHENTICATION TAB -->
                 <div class="tab-pane fade show active" id="v-login" role="tabpanel" tabindex="0">
-                    <h2 class="pane-title"><i class="fa-solid fa-fingerprint text-primary"></i> Gateway Access</h2>
+                    <h2 class="pane-title"><i class="fa-solid fa-fingerprint text-primary"></i> Truy Cập Hệ Thống</h2>
 
                     <div class="nav sub-nav mb-4" id="loginType" role="tablist">
                         <button class="nav-link active" id="token-login-tab" data-bs-toggle="pill"
                             data-bs-target="#tokenLogin" type="button" role="tab" aria-selected="true">
-                            Direct Token
+                            Token Trực Tiếp
                         </button>
                         <button class="nav-link" id="email-login-tab" data-bs-toggle="pill" data-bs-target="#emailLogin"
                             type="button" role="tab" aria-selected="false">
-                            Credentials
+                            Tài Khoản
                         </button>
                     </div>
 
@@ -665,12 +734,12 @@ HTML_TEMPLATE = """
                         <!-- Token Auth -->
                         <div class="tab-pane fade show active" id="tokenLogin" role="tabpanel">
                             <div class="mb-4">
-                                <label class="form-label">Authorization Token</label>
+                                <label class="form-label">Token Xác Thực</label>
                                 <input type="text" class="form-control" id="directToken"
-                                    placeholder="Paste DevTools Token here...">
+                                    placeholder="Dán Token từ DevTools vào đây...">
                             </div>
                             <button class="btn btn-primary btn-modern" onclick="saveDirectToken()">
-                                <i class="fa-solid fa-floppy-disk"></i> Establish Connection
+                                <i class="fa-solid fa-floppy-disk"></i> Lưu Kết Nối
                             </button>
                         </div>
 
@@ -678,7 +747,7 @@ HTML_TEMPLATE = """
                         <div class="tab-pane fade" id="emailLogin" role="tabpanel">
                             <div class="row g-3">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Email Address</label>
+                                    <label class="form-label">Địa Chỉ Email</label>
                                     <div class="input-group">
                                         <span class="input-group-text"
                                             style="background:var(--bg-glass-input); border:1px solid var(--border-glass); border-right:none; color:var(--text-muted);"><i
@@ -688,7 +757,7 @@ HTML_TEMPLATE = """
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Password</label>
+                                    <label class="form-label">Mật Khẩu</label>
                                     <div class="input-group">
                                         <span class="input-group-text"
                                             style="background:var(--bg-glass-input); border:1px solid var(--border-glass); border-right:none; color:var(--text-muted);"><i
@@ -703,25 +772,25 @@ HTML_TEMPLATE = """
                             <div class="capsolver-group">
                                 <span class="capsolver-badge">BETA</span>
                                 <label class="form-label" style="color: #a6b2ff;"><i class="fa-solid fa-robot"></i>
-                                    CapSolver Auto-Bypass</label>
+                                    CapSolver Tự Động Bypass</label>
                                 <input type="text" class="form-control" id="capsolverKey"
-                                    placeholder="CapSolver API Key (Optional)">
-                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">Intercepts
-                                    'captcha-required' errors and routes payload through AI solver automatically.</div>
+                                    placeholder="API Key CapSolver (Tuỳ chọn)">
+                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">Tự động
+                                    phát hiện lỗi captcha và điều hướng qua trình giải AI.</div>
                             </div>
 
                             <!-- MFA Hidden Block -->
                             <div class="mb-4" id="mfaGroup" style="display: none;">
                                 <label class="form-label text-warning"><i class="fa-solid fa-shield-cat"></i>
-                                    Multi-Factor Authentication</label>
+                                    Xác Thực Hai Yếu Tố (MFA)</label>
                                 <input type="text" class="form-control" id="mfaCode"
-                                    placeholder="Enter 6-digit Authenticator Code"
+                                    placeholder="Nhập mã 6 chữ số từ Authenticator"
                                     style="border-color: #fcc419; box-shadow: 0 0 10px rgba(252, 196, 25, 0.1);">
                                 <input type="hidden" id="loginTicket">
                             </div>
 
                             <button class="btn btn-primary btn-modern" id="btnEmailLogin" onclick="loginEmail()">
-                                <i class="fa-solid fa-play"></i> Initiate Login Sequence
+                                <i class="fa-solid fa-play"></i> Bắt Đầu Đăng Nhập
                             </button>
                         </div>
                     </div>
@@ -729,38 +798,38 @@ HTML_TEMPLATE = """
 
                 <!-- CHECK TOKEN TAB -->
                 <div class="tab-pane fade" id="v-check" role="tabpanel" tabindex="0">
-                    <h2 class="pane-title"><i class="fa-solid fa-microscope text-primary"></i> Session Diagnostics</h2>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Verify the integrity of
-                        a targeted token or check your currently saved local session.</p>
+                    <h2 class="pane-title"><i class="fa-solid fa-microscope text-primary"></i> Kiểm Tra Session</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Xác minh tính hợp lệ
+                        của token hoặc kiểm tra session đã lưu.</p>
 
                     <div class="mb-4">
-                        <label class="form-label">Target Token (Leave blank to check saved session)</label>
-                        <input type="text" class="form-control" id="checkToken" placeholder="Target identifier...">
+                        <label class="form-label">Token Cần Kiểm Tra (Để trống để dùng token đã lưu)</label>
+                        <input type="text" class="form-control" id="checkToken" placeholder="Dán token vào đây...">
                     </div>
 
                     <button class="btn btn-primary btn-modern" id="btnCheckToken" onclick="checkUserInfo()">
-                        <i class="fa-solid fa-radar"></i> Run Diagnostics
+                        <i class="fa-solid fa-radar"></i> Chạy Kiểm Tra
                     </button>
 
                     <div class="user-info-card" id="userInfoResult">
                         <h5
                             style="color: white; font-weight: 700; margin-bottom: 20px; font-family: 'Outfit', sans-serif;">
-                            <span class="status-dot"></span> Signal Identified
+                            <span class="status-dot"></span> Đã Xác Định
                         </h5>
                         <div class="user-info-item">
-                            <span class="user-info-label">Alias</span>
+                            <span class="user-info-label">Tên</span>
                             <span class="user-info-value" id="resUsername"></span>
                         </div>
                         <div class="user-info-item">
-                            <span class="user-info-label">Entity UID</span>
+                            <span class="user-info-label">User ID</span>
                             <span class="user-info-value" id="resId"></span>
                         </div>
                         <div class="user-info-item">
-                            <span class="user-info-label">Comms Auth</span>
+                            <span class="user-info-label">Email</span>
                             <span class="user-info-value" id="resEmail"></span>
                         </div>
                         <div class="user-info-item">
-                            <span class="user-info-label">Signal Auth</span>
+                            <span class="user-info-label">Số Điện Thoại</span>
                             <span class="user-info-value" id="resPhone"></span>
                         </div>
                     </div>
@@ -768,12 +837,12 @@ HTML_TEMPLATE = """
 
                 <!-- JOIN SERVER TAB -->
                 <div class="tab-pane fade" id="v-join" role="tabpanel" tabindex="0">
-                    <h2 class="pane-title"><i class="fa-solid fa-satellite text-primary"></i> Guild Infiltration</h2>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Force the established
-                        token session to connect to a target server cluster.</p>
+                    <h2 class="pane-title"><i class="fa-solid fa-satellite text-primary"></i> Vào Server Discord</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Dùng token đã lưu
+                        để tham gia server Discord mục tiêu.</p>
 
                     <div class="mb-4">
-                        <label class="form-label">Target Coordinate (Invite Code / URL)</label>
+                        <label class="form-label">Link / Mã Mời (Invite Code / URL)</label>
                         <div class="input-group">
                             <span class="input-group-text"
                                 style="background:var(--bg-glass-input); border:1px solid var(--border-glass); border-right:none; color:var(--text-muted);">
@@ -785,31 +854,31 @@ HTML_TEMPLATE = """
                     </div>
 
                     <button class="btn btn-primary btn-modern" id="btnJoinServer" onclick="joinDiscordServer()">
-                        <i class="fa-solid fa-bolt"></i> Execute Injection
+                        <i class="fa-solid fa-bolt"></i> Tham Gia Server
                     </button>
                 </div>
 
                 <!-- TOKEN VAULT TAB -->
                 <div class="tab-pane fade" id="v-vault" role="tabpanel" tabindex="0">
-                    <h2 class="pane-title"><i class="fa-solid fa-vault text-primary"></i> Token Vault</h2>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Manage your locally
-                        stored session token. Token is saved server-side in an encrypted temp file.</p>
+                    <h2 class="pane-title"><i class="fa-solid fa-vault text-primary"></i> Kho Token</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Quản lý token session
+                        đã lưu. Token được lưu ở file tạm trên server.</p>
 
-                    <label class="form-label">Stored Token</label>
+                    <label class="form-label">Token Đã Lưu</label>
                     <div class="vault-token-box" id="vaultTokenDisplay">
-                        <span style="color: var(--text-muted); font-style: italic;">Loading vault...</span>
+                        <span style="color: var(--text-muted); font-style: italic;">Đang tải kho token...</span>
                     </div>
 
                     <div class="vault-actions">
                         <button class="btn-small btn-copy" onclick="copyVaultToken()">
-                            <i class="fa-solid fa-copy"></i> Copy Token
+                            <i class="fa-solid fa-copy"></i> Sao Chép Token
                         </button>
                         <button class="btn-small" onclick="toggleMask()"
                             style="background:rgba(255,255,255,0.05);color:var(--text-muted);border:1px solid var(--border-glass);">
-                            <i class="fa-solid fa-eye" id="maskIcon"></i> Toggle Mask
+                            <i class="fa-solid fa-eye" id="maskIcon"></i> Ẩn/Hiện
                         </button>
                         <button class="btn-small btn-danger-sm" onclick="deleteVaultToken()">
-                            <i class="fa-solid fa-trash"></i> Delete Token
+                            <i class="fa-solid fa-trash"></i> Xóa Token
                         </button>
                     </div>
 
@@ -818,22 +887,22 @@ HTML_TEMPLATE = """
 
                 <!-- TOKEN DECODER TAB -->
                 <div class="tab-pane fade" id="v-decode" role="tabpanel" tabindex="0">
-                    <h2 class="pane-title"><i class="fa-solid fa-magnifying-glass-chart text-primary"></i> Token Decoder</h2>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Extract embedded
-                        information from a Discord token without calling the API, or fetch the full profile.</p>
+                    <h2 class="pane-title"><i class="fa-solid fa-magnifying-glass-chart text-primary"></i> Giải Mã Token</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Trích xuất thông tin
+                        từ Discord token mà không cần gọi API, hoặc lấy hồ sơ đầy đủ.</p>
 
                     <div class="mb-3">
-                        <label class="form-label">Token to Decode (Leave blank to use saved token)</label>
+                        <label class="form-label">Token Cần Giải Mã (Để trống để dùng token đã lưu)</label>
                         <input type="text" class="form-control" id="decodeToken"
-                            placeholder="Paste token or leave blank...">
+                            placeholder="Dán token hoặc để trống...">
                     </div>
 
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
                         <button class="btn btn-primary btn-modern" id="btnDecode" onclick="decodeToken()" style="flex:1;">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> Decode Locally
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Giải Mã Cục Bộ
                         </button>
                         <button class="btn btn-accent btn-modern" id="btnDecodeAPI" onclick="decodeTokenAPI()" style="flex:1;">
-                            <i class="fa-solid fa-cloud-arrow-down"></i> Fetch Full Profile
+                            <i class="fa-solid fa-cloud-arrow-down"></i> Lấy Hồ Sơ Đầy Đủ
                         </button>
                     </div>
 
@@ -841,7 +910,7 @@ HTML_TEMPLATE = """
                         <!-- Local decode section -->
                         <div id="localDecodeSection">
                             <div style="font-size:0.75rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;">
-                                <i class="fa-solid fa-microchip"></i> Embedded Data (No API)
+                                <i class="fa-solid fa-microchip"></i> Dữ Liệu Nhúng (Không cần API)
                             </div>
                             <div class="decode-grid">
                                 <div class="decode-card accent-card">
@@ -849,15 +918,15 @@ HTML_TEMPLATE = """
                                     <div class="decode-card-value" id="dUserId">—</div>
                                 </div>
                                 <div class="decode-card">
-                                    <div class="decode-card-title">Token Created At</div>
+                                    <div class="decode-card-title">Token Được Tạo Lúc</div>
                                     <div class="decode-card-value" id="dCreatedAt">—</div>
                                 </div>
                                 <div class="decode-card">
-                                    <div class="decode-card-title">Account Created At</div>
+                                    <div class="decode-card-title">Tài Khoản Được Tạo Lúc</div>
                                     <div class="decode-card-value" id="dAccountAge">—</div>
                                 </div>
                                 <div class="decode-card accent-card">
-                                    <div class="decode-card-title">HMAC Signature</div>
+                                    <div class="decode-card-title">Chữ Ký HMAC</div>
                                     <div class="decode-card-value" id="dHmac" style="font-size:0.75rem;">—</div>
                                 </div>
                             </div>
@@ -866,10 +935,10 @@ HTML_TEMPLATE = """
                         <!-- Full API profile section -->
                         <div id="apiDecodeSection" style="display:none; margin-top:24px;">
                             <div style="font-size:0.75rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;">
-                                <i class="fa-solid fa-cloud"></i> Discord API Profile
+                                <i class="fa-solid fa-cloud"></i> Hồ Sơ Discord API
                             </div>
                             <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px;">
-                                <img id="dAvatar" src="" class="avatar-preview" style="display:none;" alt="Avatar">
+                                <img id="dAvatar" src="" class="avatar-preview" style="display:none;" alt="Ảnh đại diện">
                                 <div>
                                     <div style="font-size:1.2rem; font-weight:700; color:white;" id="dUsername">—</div>
                                     <div style="font-size:0.85rem; color:var(--text-muted);" id="dDiscriminator"></div>
@@ -881,27 +950,27 @@ HTML_TEMPLATE = """
                                     <div class="decode-card-value" id="dEmail">—</div>
                                 </div>
                                 <div class="decode-card">
-                                    <div class="decode-card-title">Phone</div>
+                                    <div class="decode-card-title">Điện Thoại</div>
                                     <div class="decode-card-value" id="dPhone">—</div>
                                 </div>
                                 <div class="decode-card">
-                                    <div class="decode-card-title">Locale</div>
+                                    <div class="decode-card-title">Ngôn Ngữ</div>
                                     <div class="decode-card-value" id="dLocale">—</div>
                                 </div>
                                 <div class="decode-card">
-                                    <div class="decode-card-title">MFA Enabled</div>
+                                    <div class="decode-card-title">Bảo Mật 2 Lớp</div>
                                     <div class="decode-card-value" id="dMfa">—</div>
                                 </div>
                                 <div class="decode-card">
-                                    <div class="decode-card-title">Verified Email</div>
+                                    <div class="decode-card-title">Email Đã Xác Minh</div>
                                     <div class="decode-card-value" id="dVerified">—</div>
                                 </div>
                                 <div class="decode-card">
-                                    <div class="decode-card-title">Account Flags</div>
+                                    <div class="decode-card-title">Cờ Tài Khoản</div>
                                     <div class="decode-card-value" id="dFlags">—</div>
                                 </div>
                                 <div class="decode-card" style="grid-column: span 2;">
-                                    <div class="decode-card-title">Nitro Type</div>
+                                    <div class="decode-card-title">Loại Nitro</div>
                                     <div class="decode-card-value" id="dNitro">—</div>
                                 </div>
                             </div>
@@ -912,6 +981,122 @@ HTML_TEMPLATE = """
                 </div>
 
             </div>
+
+                <!-- TELEGRAM HUB TAB -->
+                <div class="tab-pane fade" id="v-tg" role="tabpanel" tabindex="0">
+                    <h2 class="pane-title"><i class="fa-brands fa-telegram" style="color:#229ED9;"></i> Telegram Hub</h2>
+                    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:22px;">Tương tác với Telegram Bot API. Nhập Bot Token của bạn để bắt đầu.</p>
+
+                    <!-- Bot Token field (shared) -->
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fa-solid fa-key" style="color:#229ED9;"></i> &nbsp;Bot Token</label>
+                        <input type="text" class="form-control" id="tgBotToken"
+                            placeholder="1234567890:ABCDefGhIJKlmNoPQRsTUVwxyZ"
+                            style="border-color:rgba(34,158,217,0.3); font-family:'Consolas',monospace; font-size:0.88rem;">
+                    </div>
+
+                    <!-- Sub-nav -->
+                    <div class="tg-sub-nav" id="tgSubNav" role="tablist">
+                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tgBotInfo" type="button"><i class="fa-solid fa-robot"></i> Thông Tin Bot</button>
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tgSendMsg" type="button"><i class="fa-solid fa-paper-plane"></i> Gửi Tin Nhắn</button>
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tgUserLookup" type="button"><i class="fa-solid fa-user-magnifying-glass"></i> Tra Cứu User</button>
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tgChatInfo" type="button"><i class="fa-solid fa-comments"></i> Thông Tin Chat</button>
+                    </div>
+
+                    <div class="tab-content">
+
+                        <!-- BOT INFO -->
+                        <div class="tab-pane fade show active" id="tgBotInfo" role="tabpanel">
+                            <button class="btn btn-tg btn-modern" id="btnTgBotInfo" onclick="tgGetBotInfo()">
+                                <i class="fa-solid fa-robot"></i> Lấy Thông Tin Bot
+                            </button>
+                            <div class="tg-info-card" id="tgBotInfoResult">
+                                <h5 style="color:white; font-weight:700; margin-bottom:16px;">
+                                    <span class="tg-dot"></span> Bot Đã Xác Định
+                                </h5>
+                                <div class="tg-info-item"><span class="tg-info-label">Tên</span><span class="tg-info-value" id="tgBotName">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">Username</span><span class="tg-info-value" id="tgBotUsername">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">Bot ID</span><span class="tg-info-value" id="tgBotId">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">Vào Nhóm Được</span><span class="tg-info-value" id="tgBotJoinGroups">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">Inline Queries</span><span class="tg-info-value" id="tgBotInline">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">Đọc Tất Cả Tin</span><span class="tg-info-value" id="tgBotAllMsg">—</span></div>
+                            </div>
+                        </div>
+
+                        <!-- SEND MESSAGE -->
+                        <div class="tab-pane fade" id="tgSendMsg" role="tabpanel">
+                            <div class="mb-3">
+                                <label class="form-label">Chat ID / @username</label>
+                                <input type="text" class="form-control" id="tgSendChatId" placeholder="-100123456789 or @channelusername">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nội Dung Tin Nhắn</label>
+                                <textarea class="form-control" id="tgSendText" rows="4"
+                                    placeholder="Nhập nội dung tin nhắn tại đây..."
+                                    style="resize:vertical;"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Chế Độ Parse</label>
+                                <select class="form-control" id="tgParseMode">
+                                    <option value="">Không (văn bản thường)</option>
+                                    <option value="Markdown">Markdown</option>
+                                    <option value="HTML">HTML</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-tg btn-modern" id="btnTgSend" onclick="tgSendMessage()">
+                                <i class="fa-solid fa-paper-plane"></i> Gửi Tin Nhắn
+                            </button>
+                        </div>
+
+                        <!-- USER LOOKUP -->
+                        <div class="tab-pane fade" id="tgUserLookup" role="tabpanel">
+                            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:16px;">
+                                <i class="fa-solid fa-circle-info"></i>
+                                Bot chỉ tra cứu được user đã nhắn tin với bot hoặc có nhóm chung.
+                            </p>
+                            <div class="mb-3">
+                                <label class="form-label">User ID</label>
+                                <input type="text" class="form-control" id="tgUserId" placeholder="123456789">
+                            </div>
+                            <button class="btn btn-tg btn-modern" id="btnTgUser" onclick="tgUserLookup()">
+                                <i class="fa-solid fa-user-magnifying-glass"></i> Tra Cứu User
+                            </button>
+                            <div class="tg-info-card" id="tgUserResult">
+                                <h5 style="color:white; font-weight:700; margin-bottom:16px;"><span class="tg-dot"></span> Đã Tìm Thấy User</h5>
+                                <div class="tg-info-item"><span class="tg-info-label">Họ Tên</span><span class="tg-info-value" id="tgUserName">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">Username</span><span class="tg-info-value" id="tgUserUsername">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">User ID</span><span class="tg-info-value" id="tgUserIdResult">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">Loại</span><span class="tg-info-value" id="tgUserType">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">Là Bot</span><span class="tg-info-value" id="tgUserIsBot">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">Ngôn Ngữ</span><span class="tg-info-value" id="tgUserLang">—</span></div>
+                            </div>
+                        </div>
+
+                        <!-- CHAT INFO -->
+                        <div class="tab-pane fade" id="tgChatInfo" role="tabpanel">
+                            <div class="mb-3">
+                                <label class="form-label">Chat ID / @username</label>
+                                <input type="text" class="form-control" id="tgChatId" placeholder="-100123456789 or @groupusername">
+                            </div>
+                            <button class="btn btn-tg btn-modern" id="btnTgChat" onclick="tgGetChatInfo()">
+                                <i class="fa-solid fa-comments"></i> Lấy Thông Tin Chat
+                            </button>
+                            <div class="tg-info-card" id="tgChatResult">
+                                <h5 style="color:white; font-weight:700; margin-bottom:16px;"><span class="tg-dot"></span> Đã Xác Định Chat</h5>
+                                <div class="tg-info-item"><span class="tg-info-label">Tiêu Đề</span><span class="tg-info-value" id="tgChatTitle">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">Chat ID</span><span class="tg-info-value" id="tgChatIdResult">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">Loại</span><span class="tg-info-value" id="tgChatType">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">Username</span><span class="tg-info-value" id="tgChatUsername">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">Thành Viên</span><span class="tg-info-value" id="tgChatMembers">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">Mô Tả</span><span class="tg-info-value" id="tgChatDesc">—</span></div>
+                                <div class="tg-info-item"><span class="tg-info-label">Link Mời</span><span class="tg-info-value" id="tgChatInvite">—</span></div>
+                            </div>
+                        </div>
+
+                    </div><!-- end tab-content -->
+
+                    <div id="tgAlert" class="alert-custom mt-4"></div>
+                </div><!-- end v-tg -->
 
             <!-- GLOBAL RESULT ALERTS -->
             <div id="resultAlert" class="alert-custom mt-4"></div>
@@ -1150,6 +1335,120 @@ HTML_TEMPLATE = """
 
         // Load vault when that tab is shown
         document.getElementById('v-vault-tab').addEventListener('shown.bs.tab', loadVault);
+
+        // =====================================================
+        // MODULE: TELEGRAM HUB
+        // =====================================================
+        function tgShowAlert(msg, type) {
+            const el = document.getElementById('tgAlert');
+            el.style.display = 'block';
+            el.className = `alert-custom alert-${type} mt-4`;
+            el.innerHTML = msg;
+        }
+        function tgHideAlert() { document.getElementById('tgAlert').style.display = 'none'; }
+
+        function getBotToken() {
+            const t = document.getElementById('tgBotToken').value.trim();
+            if (!t) tgShowAlert('<i class="fa-solid fa-triangle-exclamation" style="margin-right:6px;"></i> Please enter a Bot Token first.', 'danger');
+            return t;
+        }
+
+        // --- Bot Info ---
+        async function tgGetBotInfo() {
+            const token = getBotToken(); if (!token) return;
+            tgHideAlert();
+            loadBtn('btnTgBotInfo', 'Fetching...');
+            try {
+                const res = await axios.post('/api/tg/bot_info', { bot_token: token });
+                if (!res.data.success) { tgShowAlert('Error: ' + res.data.message, 'danger'); return; }
+                const b = res.data.bot;
+                document.getElementById('tgBotName').innerText = b.first_name || '—';
+                document.getElementById('tgBotUsername').innerText = b.username ? '@' + b.username : '—';
+                document.getElementById('tgBotId').innerText = b.id || '—';
+                document.getElementById('tgBotJoinGroups').innerText = b.can_join_groups ? '✅ Yes' : '❌ No';
+                document.getElementById('tgBotInline').innerText = b.supports_inline_queries ? '✅ Yes' : '❌ No';
+                document.getElementById('tgBotAllMsg').innerText = b.can_read_all_group_messages ? '✅ Yes' : '❌ No';
+                document.getElementById('tgBotInfoResult').style.display = 'block';
+                tgShowAlert('<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Bot token valid — info loaded.', 'success');
+            } catch(e) {
+                tgShowAlert('Request failed: ' + (e.response?.data?.message || e.message), 'danger');
+            } finally { resetBtn('btnTgBotInfo', 'Get Bot Info', 'fa-solid fa-robot'); }
+        }
+
+        // --- Send Message ---
+        async function tgSendMessage() {
+            const token = getBotToken(); if (!token) return;
+            const chatId = document.getElementById('tgSendChatId').value.trim();
+            const text = document.getElementById('tgSendText').value.trim();
+            const parseMode = document.getElementById('tgParseMode').value;
+            if (!chatId) return tgShowAlert('Please enter a Chat ID or @username.', 'danger');
+            if (!text) return tgShowAlert('Message text cannot be empty.', 'danger');
+            tgHideAlert();
+            loadBtn('btnTgSend', 'Sending...');
+            try {
+                const payload = { bot_token: token, chat_id: chatId, text: text };
+                if (parseMode) payload.parse_mode = parseMode;
+                const res = await axios.post('/api/tg/send_message', payload);
+                if (res.data.success) {
+                    tgShowAlert('<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Message sent successfully!', 'success');
+                    document.getElementById('tgSendText').value = '';
+                } else {
+                    tgShowAlert('Failed: ' + res.data.message, 'danger');
+                }
+            } catch(e) {
+                tgShowAlert('Request failed: ' + (e.response?.data?.message || e.message), 'danger');
+            } finally { resetBtn('btnTgSend', 'Send Message', 'fa-solid fa-paper-plane'); }
+        }
+
+        // --- User Lookup ---
+        async function tgUserLookup() {
+            const token = getBotToken(); if (!token) return;
+            const userId = document.getElementById('tgUserId').value.trim();
+            if (!userId) return tgShowAlert('Please enter a User ID.', 'danger');
+            tgHideAlert();
+            loadBtn('btnTgUser', 'Looking up...');
+            try {
+                const res = await axios.post('/api/tg/get_user', { bot_token: token, user_id: userId });
+                if (!res.data.success) { tgShowAlert('Error: ' + res.data.message, 'danger'); return; }
+                const u = res.data.user;
+                const fullName = [u.first_name, u.last_name].filter(Boolean).join(' ');
+                document.getElementById('tgUserName').innerText = fullName || '—';
+                document.getElementById('tgUserUsername').innerText = u.username ? '@' + u.username : 'None';
+                document.getElementById('tgUserIdResult').innerText = u.id || '—';
+                document.getElementById('tgUserType').innerText = u.type || '—';
+                document.getElementById('tgUserIsBot').innerText = u.is_bot ? '🤖 Yes' : '👤 No';
+                document.getElementById('tgUserLang').innerText = u.language_code || 'Unknown';
+                document.getElementById('tgUserResult').style.display = 'block';
+                tgShowAlert('<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> User info retrieved.', 'success');
+            } catch(e) {
+                tgShowAlert('Request failed: ' + (e.response?.data?.message || e.message), 'danger');
+            } finally { resetBtn('btnTgUser', 'Lookup User', 'fa-solid fa-user-magnifying-glass'); }
+        }
+
+        // --- Chat Info ---
+        async function tgGetChatInfo() {
+            const token = getBotToken(); if (!token) return;
+            const chatId = document.getElementById('tgChatId').value.trim();
+            if (!chatId) return tgShowAlert('Please enter a Chat ID or @username.', 'danger');
+            tgHideAlert();
+            loadBtn('btnTgChat', 'Fetching...');
+            try {
+                const res = await axios.post('/api/tg/get_chat', { bot_token: token, chat_id: chatId });
+                if (!res.data.success) { tgShowAlert('Error: ' + res.data.message, 'danger'); return; }
+                const c = res.data.chat;
+                document.getElementById('tgChatTitle').innerText = c.title || c.first_name || '—';
+                document.getElementById('tgChatIdResult').innerText = c.id || '—';
+                document.getElementById('tgChatType').innerText = c.type || '—';
+                document.getElementById('tgChatUsername').innerText = c.username ? '@' + c.username : 'None';
+                document.getElementById('tgChatMembers').innerText = res.data.member_count !== null ? res.data.member_count.toLocaleString() : 'N/A';
+                document.getElementById('tgChatDesc').innerText = c.description || 'No description';
+                document.getElementById('tgChatInvite').innerText = c.invite_link || 'None';
+                document.getElementById('tgChatResult').style.display = 'block';
+                tgShowAlert('<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Chat info loaded.', 'success');
+            } catch(e) {
+                tgShowAlert('Request failed: ' + (e.response?.data?.message || e.message), 'danger');
+            } finally { resetBtn('btnTgChat', 'Get Chat Info', 'fa-solid fa-comments'); }
+        }
 
         // =====================================================
         // MODULE: TOKEN DECODER
@@ -1487,6 +1786,71 @@ def api_join():
         return jsonify({"success": True, "guild_name": guild.get("name", "Unknown Server")})
     else:
         return jsonify({"success": False, "message": res.text}), 400
+
+# ─────────── TELEGRAM HUB ───────────
+
+TG_BASE = "https://api.telegram.org/bot{token}/{method}"
+
+def tg_call(bot_token, method, payload=None):
+    url = TG_BASE.format(token=bot_token, method=method)
+    res = requests.post(url, json=payload or {}, timeout=10)
+    return res.json()
+
+@app.route("/api/tg/bot_info", methods=["POST"])
+def api_tg_bot_info():
+    data = request.json or {}
+    bot_token = data.get("bot_token", "").strip()
+    if not bot_token:
+        return jsonify({"success": False, "message": "Bot token required."}), 400
+    result = tg_call(bot_token, "getMe")
+    if result.get("ok"):
+        return jsonify({"success": True, "bot": result["result"]})
+    return jsonify({"success": False, "message": result.get("description", "Unknown error")}), 400
+
+@app.route("/api/tg/send_message", methods=["POST"])
+def api_tg_send_message():
+    data = request.json or {}
+    bot_token = data.get("bot_token", "").strip()
+    chat_id = data.get("chat_id", "").strip()
+    text = data.get("text", "").strip()
+    parse_mode = data.get("parse_mode", "")
+    if not bot_token or not chat_id or not text:
+        return jsonify({"success": False, "message": "bot_token, chat_id, and text are required."}), 400
+    payload = {"chat_id": chat_id, "text": text}
+    if parse_mode:
+        payload["parse_mode"] = parse_mode
+    result = tg_call(bot_token, "sendMessage", payload)
+    if result.get("ok"):
+        return jsonify({"success": True, "message_id": result["result"].get("message_id")})
+    return jsonify({"success": False, "message": result.get("description", "Unknown error")}), 400
+
+@app.route("/api/tg/get_user", methods=["POST"])
+def api_tg_get_user():
+    data = request.json or {}
+    bot_token = data.get("bot_token", "").strip()
+    user_id = data.get("user_id", "").strip()
+    if not bot_token or not user_id:
+        return jsonify({"success": False, "message": "bot_token and user_id are required."}), 400
+    result = tg_call(bot_token, "getChat", {"chat_id": user_id})
+    if result.get("ok"):
+        return jsonify({"success": True, "user": result["result"]})
+    return jsonify({"success": False, "message": result.get("description", "Unknown error")}), 400
+
+@app.route("/api/tg/get_chat", methods=["POST"])
+def api_tg_get_chat():
+    data = request.json or {}
+    bot_token = data.get("bot_token", "").strip()
+    chat_id = data.get("chat_id", "").strip()
+    if not bot_token or not chat_id:
+        return jsonify({"success": False, "message": "bot_token and chat_id are required."}), 400
+    chat_result = tg_call(bot_token, "getChat", {"chat_id": chat_id})
+    if not chat_result.get("ok"):
+        return jsonify({"success": False, "message": chat_result.get("description", "Unknown error")}), 400
+    member_count = None
+    count_result = tg_call(bot_token, "getChatMemberCount", {"chat_id": chat_id})
+    if count_result.get("ok"):
+        member_count = count_result["result"]
+    return jsonify({"success": True, "chat": chat_result["result"], "member_count": member_count})
 
 # Required for Vercel
 # Disable debug mode as it causes issues in serverless environments
